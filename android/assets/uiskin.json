@@ -1,0 +1,4 @@
+{"com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle":
+
+"default-horizontal: { background: greenBackground, disabledBackground: sliderDisabled, knob: woodenKnob, disabledKnob: transparent ",
+}
