@@ -28,9 +28,11 @@ public class MainGameScreen implements Screen {
     public static final int SHIP_WIDTH = SHIP_WIDTH_PIXEL * 3;
     public static final int SHIP_HEIGHT = SHIP_HEIGHT_PIXEL * 3;
 
-    public static final float MIN_ASTEROID_SPAWN_TIMER = 0.2f;
-    public static final float MAX_ASTEROID_SPAWN_TIMER = 0.6f;
+    public static final float MIN_ASTEROID_SPAWN_TIMER_LEVEL1 = 0.5f;
+    public static final float MAX_ASTEROID_SPAWN_TIMER_LEVEL1 = 1f;
 
+    public static final float MIN_ASTEROID_SPAWN_TIMER_LEVEL2 = 0.2f;
+    public static final float MAX_ASTEROID_SPAWN_TIMER_LEVEL2 = 0.6f;
 
     Animation[] rolls;
 
@@ -40,6 +42,9 @@ public class MainGameScreen implements Screen {
     float stateTime;
     float asteroidSpawnTimer;
     boolean paused = false;
+    private long startTime;
+    private boolean running;
+    private long elapsed;
 
     Music ingamemusic;
 
@@ -52,6 +57,7 @@ public class MainGameScreen implements Screen {
     ArrayList<Asteroid> asteroids;
 
     Texture blank;
+    private Texture level1, level2;
     private Texture playingame, pauseingame;
 
     CollisionRect playerRect;
@@ -73,7 +79,7 @@ public class MainGameScreen implements Screen {
         playerRect = new CollisionRect(0, 0, SHIP_WIDTH, SHIP_HEIGHT);
 
         random = new Random();
-        asteroidSpawnTimer = random.nextFloat() * (MAX_ASTEROID_SPAWN_TIMER - MIN_ASTEROID_SPAWN_TIMER) + MIN_ASTEROID_SPAWN_TIMER;
+        asteroidSpawnTimer = random.nextFloat() * (MAX_ASTEROID_SPAWN_TIMER_LEVEL1 - MIN_ASTEROID_SPAWN_TIMER_LEVEL1) + MIN_ASTEROID_SPAWN_TIMER_LEVEL1;
 
         roll = 1;
         rolls = new Animation[4];
@@ -84,8 +90,10 @@ public class MainGameScreen implements Screen {
         playingame = new Texture("playingame.png");
         pauseingame = new Texture("pauseingame.png");
 
-        ingamemusic = Gdx.audio.newMusic(Gdx.files.internal("ingamemusicfinal.mp3"));
+        level1 = new Texture("level1.png");
+        level2 = new Texture("level2.png");
 
+        ingamemusic = Gdx.audio.newMusic(Gdx.files.internal("ingamemusicfinal.mp3"));
         ingamemusic.play();
         ingamemusic.setLooping(true);
 
@@ -102,7 +110,6 @@ public class MainGameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
 
         if(paused){
             game.batch.begin();
@@ -123,14 +130,153 @@ public class MainGameScreen implements Screen {
         }
         else{
             game.batch.begin();
-            game.batch.draw(pauseingame, GokuDodge.WIDTH_DESKTOP / 16 - pauseingame.getWidth() / 2, 20, pauseingame.getWidth(), pauseingame.getHeight());
+            game.batch.draw(pauseingame, GokuDodge.WIDTH_DESKTOP - pauseingame.getWidth(), 20, pauseingame.getWidth(), pauseingame.getHeight());
             game.batch.end();
-            generalUpdate(delta);
+            if(ingamemusic.getPosition() > 0 && ingamemusic.getPosition() < 5) {
+                generalUpdateLevelIntro(delta, level1);
+            }
+            else if (ingamemusic.getPosition() > 5 && ingamemusic.getPosition() < 35){
+                generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL1, MAX_ASTEROID_SPAWN_TIMER_LEVEL1);
+            }
+            else if(ingamemusic.getPosition() > 35 && ingamemusic.getPosition() < 40){
+                generalUpdateLevelIntro(delta, level2);
+            }
+            else if(ingamemusic.getPosition() > 40 && ingamemusic.getPosition() < 70){
+                generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL2, MAX_ASTEROID_SPAWN_TIMER_LEVEL2);
+            }
+            else{
+                generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL2, MAX_ASTEROID_SPAWN_TIMER_LEVEL2);
+            }
         }
+
+        System.out.println(ingamemusic.getPosition());
 
     }
 
-    public void generalUpdate(float delta){
+
+
+    public void generalUpdateLevelIntro (float delta, Texture texture){
+        if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP  - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP  - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                paused = true;
+                ingamemusic.pause();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            x -= SPEED * Gdx.graphics.getDeltaTime();
+
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            x += SPEED * Gdx.graphics.getDeltaTime();
+
+            if (x + SHIP_WIDTH > GokuDodge.WIDTH_DESKTOP) {
+                x = GokuDodge.WIDTH_DESKTOP - SHIP_WIDTH;
+            }
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            y += SPEED * Gdx.graphics.getDeltaTime();
+
+            if (y + SHIP_HEIGHT > GokuDodge.HEIGHT_DESKTOP) {
+                y = GokuDodge.HEIGHT_DESKTOP - SHIP_HEIGHT;
+            }
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            y -= SPEED * Gdx.graphics.getDeltaTime();
+
+            if (y < 0) {
+                y = 0;
+            }
+        }
+
+
+        if (Gdx.input.isTouched()) {
+
+            touch = new Vector2(game.cam.getInputInGameWorld().x, game.cam.getInputInGameWorld().y);
+
+            //clicked on sprite
+            // do something that vanish the object clicked
+            //if(touch.x < GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 + SHIP_WIDTH && touch.x > GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 && GokuDodge.HEIGHT_DESKTOP - touch.y < GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2 + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP - touch.y > GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2) {
+            //}
+
+            x = touch.x - SHIP_HEIGHT / 2;
+            y = (GokuDodge.HEIGHT_DESKTOP - touch.y) + SHIP_HEIGHT / 2;
+
+            if (x < 0) {
+                x = 0;
+            }
+
+            if (x + SHIP_WIDTH > GokuDodge.WIDTH_DESKTOP) {
+                x = GokuDodge.WIDTH_DESKTOP - SHIP_WIDTH;
+            }
+
+            if (y + SHIP_HEIGHT > GokuDodge.HEIGHT_DESKTOP) {
+                y = GokuDodge.HEIGHT_DESKTOP - SHIP_HEIGHT;
+            }
+
+            if (y < 0) {
+                y = 0;
+            }
+        }
+
+        //asteroid spawn code
+
+        //after player moves, update collision rect
+        playerRect.move(x, y);
+
+        //asteroid update code
+        ArrayList<Asteroid> asteroidsToRemove = new ArrayList<Asteroid>();
+        for (Asteroid asteroid : asteroids) {
+            asteroid.update(delta);
+            if (asteroid.remove) {
+                asteroidsToRemove.add(asteroid);
+            }
+        }
+
+
+        for (Asteroid asteroid : asteroids) {
+            if (asteroid.getCollisionRect().collidesWith(playerRect)) {
+                asteroidsToRemove.add(asteroid);
+                health -= 1;
+
+                if (health <= 0) {
+                    this.dispose();
+                    game.setScreen(new GameOverScreen(game, 1));
+                    return;
+                }
+            }
+        }
+        asteroids.removeAll(asteroidsToRemove);
+
+        stateTime += delta;
+
+        Gdx.gl.glClearColor(0, 0, 0, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        TextureRegion currentFrame = (TextureRegion) rolls[roll].getKeyFrame(stateTime, true);
+
+        game.batch.begin();
+
+        game.scrollingBackground.updateAndRender(delta, game.batch);
+
+        for (Asteroid asteroid : asteroids) {
+            asteroid.render(game.batch);
+        }
+
+        game.batch.draw(blank, 0, 0, GokuDodge.WIDTH_DESKTOP * health, 5);
+        game.batch.draw(currentFrame, x, y, SHIP_WIDTH, SHIP_HEIGHT);
+        game.batch.draw(pauseingame, GokuDodge.WIDTH_DESKTOP - pauseingame.getWidth(), 20, pauseingame.getWidth(), pauseingame.getHeight());
+
+        game.batch.draw(texture, GokuDodge.WIDTH_DESKTOP / 2 - level1.getWidth() / 2, 300, level1.getWidth(), level1.getHeight());
+        game.batch.end();
+    }
+
+
+    public void generalUpdateLevel1(float delta, float minAsteroidSpawnTimer, float maxAsteroidSpawnTimer){
         if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP  - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP  - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 paused = true;
@@ -202,7 +348,7 @@ public class MainGameScreen implements Screen {
         //asteroid spawn code
         asteroidSpawnTimer -= delta;
         if (asteroidSpawnTimer <= 0) {
-            asteroidSpawnTimer = random.nextFloat() * (MAX_ASTEROID_SPAWN_TIMER - MIN_ASTEROID_SPAWN_TIMER) + MIN_ASTEROID_SPAWN_TIMER;
+            asteroidSpawnTimer = random.nextFloat() * (maxAsteroidSpawnTimer - minAsteroidSpawnTimer) + minAsteroidSpawnTimer;
             asteroids.add(new Asteroid(random.nextInt(GokuDodge.WIDTH_DESKTOP - Asteroid.WIDTH)));
         }
 
@@ -252,6 +398,7 @@ public class MainGameScreen implements Screen {
 
         game.batch.end();
     }
+
 
     public enum State {
         PAUSE,
