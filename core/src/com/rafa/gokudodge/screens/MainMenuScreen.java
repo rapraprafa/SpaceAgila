@@ -113,7 +113,7 @@ public class MainMenuScreen implements Screen {
         //Mute
         if(mainmenumusic.getVolume() == 1f) {
             game.batch.draw(soundButtonPlay, GokuDodge.WIDTH_DESKTOP / 16 - soundButtonPlay.getWidth() / 2, 20, soundButtonPlay.getWidth(), soundButtonPlay.getHeight());
-            if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP / 16 - soundButtonPlay.getWidth() / 2 + soundButtonPlay.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP / 16 - soundButtonPlay.getWidth() / 2 && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 50 + soundButtonPlay.getHeight() && game.cam.getInputInGameWorld().y > 50) {
+            if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP / 16 - soundButtonPlay.getWidth() / 2 + soundButtonPlay.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP / 16 - soundButtonPlay.getWidth() / 2 && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + soundButtonPlay.getHeight() && game.cam.getInputInGameWorld().y > 20) {
                 if (Gdx.input.justTouched()) {
                     mainmenumusic.setVolume(0f);
                     System.out.println("hi1");
@@ -133,7 +133,7 @@ public class MainMenuScreen implements Screen {
         //Unmute
         else if (mainmenumusic.getVolume() == 0f) {
             game.batch.draw(soundButtonMute, GokuDodge.WIDTH_DESKTOP / 16 - soundButtonMute.getWidth() / 2, 20, soundButtonMute.getWidth(), soundButtonMute.getHeight());
-            if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP / 16 - soundButtonMute.getWidth() / 2 + soundButtonMute.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP / 16 - soundButtonMute.getWidth() / 2 && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 50 + soundButtonMute.getHeight() && game.cam.getInputInGameWorld().y > 50) {
+            if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP / 16 - soundButtonMute.getWidth() / 2 + soundButtonMute.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP / 16 - soundButtonMute.getWidth() / 2 && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + soundButtonMute.getHeight() && game.cam.getInputInGameWorld().y > 20) {
                 if (Gdx.input.justTouched()) {
                     mainmenumusic.setVolume(1f);
                     System.out.println("hi3");
