@@ -75,7 +75,6 @@ public class GameOverScreen implements Screen {
         }
 
         gameovermusic.play();
-
         game.batch.end();
     }
 

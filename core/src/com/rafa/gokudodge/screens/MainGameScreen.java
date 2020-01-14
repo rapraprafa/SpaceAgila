@@ -1,7 +1,9 @@
 package com.rafa.gokudodge.screens;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
@@ -17,6 +19,8 @@ import com.rafa.gokudodge.tools.CollisionRect;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import javax.swing.text.View;
 
 public class MainGameScreen implements Screen {
 
@@ -41,7 +45,7 @@ public class MainGameScreen implements Screen {
     int roll;
     float stateTime;
     float asteroidSpawnTimer;
-    boolean paused = false;
+    static boolean paused;
     boolean dragging;
 
 
@@ -57,13 +61,13 @@ public class MainGameScreen implements Screen {
 
     Texture blank;
     private Texture level1, level2;
-    private Texture playingame, pauseingame;
+    private Texture playingame, pauseingame, pausedbanner, mainMenuBanner, resume;
 
     CollisionRect playerRect;
 
     float health = 1;//0 = dead, 1 = alive
 
-    private State state = State.RUN;
+    State state;
 
     public MainGameScreen(GokuDodge game) {
         this.game = game;
@@ -89,12 +93,18 @@ public class MainGameScreen implements Screen {
         playingame = new Texture("playingame.png");
         pauseingame = new Texture("pauseingame.png");
 
+        pausedbanner = new Texture("pausedbanner.png");
+        mainMenuBanner = new Texture("main-menu.png");
+        resume = new Texture("resume.png");
+
         level1 = new Texture("level1.png");
         level2 = new Texture("level2.png");
+
 
         ingamemusic = Gdx.audio.newMusic(Gdx.files.internal("ingamemusicfinal.mp3"));
         ingamemusic.play();
         ingamemusic.setLooping(true);
+        state = State.RUN;
 
     }
 
@@ -110,53 +120,74 @@ public class MainGameScreen implements Screen {
     @Override
     public void render(float delta) {
 
-
-        if (paused) {
-            game.batch.begin();
-            game.batch.draw(playingame, GokuDodge.WIDTH_DESKTOP - playingame.getWidth(), 20, playingame.getWidth(), playingame.getHeight());
-            game.batch.end();
-            if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                    paused = false;
-                    ingamemusic.play();
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        switch(state){
+            case RUN:
+                game.batch.begin();
+                game.batch.draw(pauseingame, GokuDodge.WIDTH_DESKTOP - pauseingame.getWidth(), 20, pauseingame.getWidth(), pauseingame.getHeight());
+                game.batch.end();
+                if (ingamemusic.getPosition() > 0 && ingamemusic.getPosition() < 5) {
+                    generalUpdateLevelIntro(delta, level1);
+                } else if (ingamemusic.getPosition() > 5 && ingamemusic.getPosition() < 35) {
+                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL1, MAX_ASTEROID_SPAWN_TIMER_LEVEL1);
+                } else if (ingamemusic.getPosition() > 35 && ingamemusic.getPosition() < 40) {
+                    generalUpdateLevelIntro(delta, level2);
+                } else if (ingamemusic.getPosition() > 40 && ingamemusic.getPosition() < 70) {
+                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL2, MAX_ASTEROID_SPAWN_TIMER_LEVEL2);
+                } else {
+                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL2, MAX_ASTEROID_SPAWN_TIMER_LEVEL2);
                 }
-            }
-        } else {
-            game.batch.begin();
-            game.batch.draw(pauseingame, GokuDodge.WIDTH_DESKTOP - pauseingame.getWidth(), 20, pauseingame.getWidth(), pauseingame.getHeight());
-            game.batch.end();
-            if (ingamemusic.getPosition() > 0 && ingamemusic.getPosition() < 5) {
-                generalUpdateLevelIntro(delta, level1);
-            } else if (ingamemusic.getPosition() > 5 && ingamemusic.getPosition() < 35) {
-                generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL1, MAX_ASTEROID_SPAWN_TIMER_LEVEL1);
-            } else if (ingamemusic.getPosition() > 35 && ingamemusic.getPosition() < 40) {
-                generalUpdateLevelIntro(delta, level2);
-            } else if (ingamemusic.getPosition() > 40 && ingamemusic.getPosition() < 70) {
-                generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL2, MAX_ASTEROID_SPAWN_TIMER_LEVEL2);
-            } else {
-                generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL2, MAX_ASTEROID_SPAWN_TIMER_LEVEL2);
+                break;
+            case PAUSE:
+                paused();
+                break;
+            default:
+                break;
+        }
+
+
+    }
+
+    public void paused(){
+        int xTryAgain = GokuDodge.WIDTH_DESKTOP / 2 - GameOverScreen.BANNER_WIDTH / 2 + GameOverScreen.BANNER_WIDTH/4;
+        int yTryAgain = GokuDodge.HEIGHT_DESKTOP - GameOverScreen.BANNER_HEIGHT - 250;
+
+        ingamemusic.pause();
+        Gdx.gl.glClearColor(0.15f, 0.15f, 0.4f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        game.batch.begin();
+
+        game.batch.draw(pausedbanner, GokuDodge.WIDTH_DESKTOP / 2 - pausedbanner.getWidth() / 2, 500, pausedbanner.getWidth(), pausedbanner.getHeight());
+        game.batch.draw(resume, xTryAgain, yTryAgain, GameOverScreen.BANNER_WIDTH/2, GameOverScreen.BANNER_HEIGHT/2);
+        game.batch.draw(mainMenuBanner, xTryAgain, yTryAgain - 100, GameOverScreen.BANNER_WIDTH/2, GameOverScreen.BANNER_HEIGHT/2);
+
+
+        if (game.cam.getInputInGameWorld().x < xTryAgain + GameOverScreen.BANNER_WIDTH/2 && game.cam.getInputInGameWorld().x > xTryAgain && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < yTryAgain + GameOverScreen.BANNER_HEIGHT/2 && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > yTryAgain) {
+            if (Gdx.input.justTouched()) {
+                state = State.RUN;
+                ingamemusic.play();
             }
         }
 
+        if (game.cam.getInputInGameWorld().x < xTryAgain + GameOverScreen.BANNER_WIDTH/2 && game.cam.getInputInGameWorld().x > xTryAgain && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < yTryAgain - 100 + GameOverScreen.BANNER_HEIGHT/2 && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > yTryAgain - 100) {
+            if (Gdx.input.justTouched()) {
+                this.dispose();
+                game.batch.end();
+                game.setScreen(new MainMenuScreen(game));
+                return;
+            }
+        }
+
+        game.batch.end();
 
     }
 
 
     public void generalUpdateLevelIntro(float delta, Texture texture) {
         if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                paused = true;
+            if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.HOME)) {
+//                paused = true;
+                state = State.PAUSE;
                 ingamemusic.pause();
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
         }
 
@@ -283,14 +314,10 @@ public class MainGameScreen implements Screen {
 
     public void generalUpdateLevel1(float delta, float minAsteroidSpawnTimer, float maxAsteroidSpawnTimer) {
         if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                paused = true;
+            if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK) || Gdx.input.isKeyJustPressed(Input.Keys.HOME)) {
+//                paused = true;
+                state = State.PAUSE;
                 ingamemusic.pause();
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
         }
 
@@ -420,10 +447,9 @@ public class MainGameScreen implements Screen {
 
     public enum State {
         PAUSE,
-        RUN,
-        RESUME,
-        STOPPED
+        RUN
     }
+
 
     @Override
     public void resize(int width, int height) {
@@ -432,12 +458,12 @@ public class MainGameScreen implements Screen {
 
     @Override
     public void pause() {
-        this.state = State.PAUSE;
+
     }
 
     @Override
     public void resume() {
-        this.state = State.RESUME;
+
     }
 
     @Override
