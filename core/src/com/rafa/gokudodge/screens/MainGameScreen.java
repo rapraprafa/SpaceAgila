@@ -28,11 +28,11 @@ public class MainGameScreen implements Screen {
     public static final int SHIP_WIDTH = SHIP_WIDTH_PIXEL * 3;
     public static final int SHIP_HEIGHT = SHIP_HEIGHT_PIXEL * 3;
 
-    public static final float MIN_ASTEROID_SPAWN_TIMER_LEVEL1 = 0.5f;
-    public static final float MAX_ASTEROID_SPAWN_TIMER_LEVEL1 = 1f;
+    public static final float MIN_ASTEROID_SPAWN_TIMER_LEVEL1 = 200f;
+    public static final float MAX_ASTEROID_SPAWN_TIMER_LEVEL1 = 200f;
 
-    public static final float MIN_ASTEROID_SPAWN_TIMER_LEVEL2 = 0.2f;
-    public static final float MAX_ASTEROID_SPAWN_TIMER_LEVEL2 = 0.6f;
+    public static final float MIN_ASTEROID_SPAWN_TIMER_LEVEL2 = 200f;
+    public static final float MAX_ASTEROID_SPAWN_TIMER_LEVEL2 = 200f;
 
     Animation[] rolls;
 
@@ -195,7 +195,7 @@ public class MainGameScreen implements Screen {
         }
 
 
-        if (Gdx.input.isTouched()) {
+
 
             touch = new Vector2(game.cam.getInputInGameWorld().x, game.cam.getInputInGameWorld().y);
 
@@ -204,8 +204,13 @@ public class MainGameScreen implements Screen {
             //if(touch.x < GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 + SHIP_WIDTH && touch.x > GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 && GokuDodge.HEIGHT_DESKTOP - touch.y < GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2 + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP - touch.y > GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2) {
             //}
 
-            x = touch.x - SHIP_HEIGHT / 2;
-            y = (GokuDodge.HEIGHT_DESKTOP - touch.y) + SHIP_HEIGHT / 2;
+            if (game.cam.getInputInGameWorld().x < x + SHIP_WIDTH && game.cam.getInputInGameWorld().x > x && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < y + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP + game.cam.getInputInGameWorld().y > y) {
+                if (Gdx.input.isTouched()) {
+                    x = touch.x - SHIP_WIDTH / 2;
+                    y = ((GokuDodge.HEIGHT_DESKTOP - touch.y) + SHIP_HEIGHT / 2);
+                }
+            }
+
 
             if (x < 0) {
                 x = 0;
@@ -222,7 +227,7 @@ public class MainGameScreen implements Screen {
             if (y < 0) {
                 y = 0;
             }
-        }
+
 
         //asteroid spawn code
 
@@ -316,7 +321,7 @@ public class MainGameScreen implements Screen {
         }
 
 
-        if (Gdx.input.isTouched()) {
+
 
             touch = new Vector2(game.cam.getInputInGameWorld().x, game.cam.getInputInGameWorld().y);
 
@@ -325,8 +330,13 @@ public class MainGameScreen implements Screen {
             //if(touch.x < GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 + SHIP_WIDTH && touch.x > GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 && GokuDodge.HEIGHT_DESKTOP - touch.y < GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2 + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP - touch.y > GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2) {
             //}
 
-            x = touch.x - SHIP_HEIGHT / 2;
-            y = (GokuDodge.HEIGHT_DESKTOP - touch.y) + SHIP_HEIGHT / 2;
+            if (game.cam.getInputInGameWorld().x < x + SHIP_WIDTH && game.cam.getInputInGameWorld().x > x && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < y + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP + game.cam.getInputInGameWorld().y > y) {
+                if (Gdx.input.isTouched()) {
+                    x = touch.x - SHIP_WIDTH / 2;
+                    y = ((GokuDodge.HEIGHT_DESKTOP - touch.y) + SHIP_HEIGHT / 2);
+                }
+            }
+
 
             if (x < 0) {
                 x = 0;
@@ -343,7 +353,7 @@ public class MainGameScreen implements Screen {
             if (y < 0) {
                 y = 0;
             }
-        }
+
 
         //asteroid spawn code
         asteroidSpawnTimer -= delta;

@@ -2,6 +2,7 @@ package com.rafa.gokudodge.screens;
 
 import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.AudioDevice;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.rafa.gokudodge.GokuDodge;
+
 
 
 public class MainMenuScreen implements Screen {
@@ -21,7 +23,6 @@ public class MainMenuScreen implements Screen {
     private static final int PLAY_BUTTON_Y = 250;
 
     Music mainmenumusic;
-
 
     final GokuDodge game;
     Texture playButtonActive;
@@ -54,7 +55,7 @@ public class MainMenuScreen implements Screen {
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 //Exit button
                 int xExit = GokuDodge.WIDTH_DESKTOP / 2 - EXIT_BUTTON_WIDTH / 2;
-                if (game.cam.getInputInGameWorld().x < xExit + EXIT_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xExit && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < EXIT_BUTTON_Y + EXIT_BUTTON_HEIGHT && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > EXIT_BUTTON_Y) {
+                if ((game.cam.getInputInGameWorld().x < xExit + EXIT_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xExit && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < EXIT_BUTTON_Y + EXIT_BUTTON_HEIGHT && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > EXIT_BUTTON_Y)) {
                     mainMenuScreen.dispose();
                     Gdx.app.exit();
                 }
@@ -62,7 +63,7 @@ public class MainMenuScreen implements Screen {
 
                 //Play Game button
                 int xPlay = GokuDodge.WIDTH_DESKTOP / 2 - PLAY_BUTTON_WIDTH / 2;
-                if (game.cam.getInputInGameWorld().x < xPlay + PLAY_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xPlay && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < PLAY_BUTTON_Y + PLAY_BUTTON_HEIGHT && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > PLAY_BUTTON_Y) {
+                if ((game.cam.getInputInGameWorld().x < xPlay + PLAY_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xPlay && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < PLAY_BUTTON_Y + PLAY_BUTTON_HEIGHT && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > PLAY_BUTTON_Y)) {
                     mainMenuScreen.dispose();
                     game.setScreen(new MainGameScreen(game));
                 }
@@ -90,8 +91,6 @@ public class MainMenuScreen implements Screen {
 
 
         game.scrollingBackground.updateAndRender(delta, game.batch);
-
-
 
         int xExit = GokuDodge.WIDTH_DESKTOP / 2 - EXIT_BUTTON_WIDTH / 2;
         int xPlay = GokuDodge.WIDTH_DESKTOP / 2 - PLAY_BUTTON_WIDTH / 2;
