@@ -28,11 +28,11 @@ public class MainGameScreen implements Screen {
     public static final int SHIP_WIDTH = SHIP_WIDTH_PIXEL * 3;
     public static final int SHIP_HEIGHT = SHIP_HEIGHT_PIXEL * 3;
 
-    public static final float MIN_ASTEROID_SPAWN_TIMER_LEVEL1 = 200f;
-    public static final float MAX_ASTEROID_SPAWN_TIMER_LEVEL1 = 200f;
+    public static final float MIN_ASTEROID_SPAWN_TIMER_LEVEL1 = 0.5f;
+    public static final float MAX_ASTEROID_SPAWN_TIMER_LEVEL1 = 1f;
 
-    public static final float MIN_ASTEROID_SPAWN_TIMER_LEVEL2 = 200f;
-    public static final float MAX_ASTEROID_SPAWN_TIMER_LEVEL2 = 200f;
+    public static final float MIN_ASTEROID_SPAWN_TIMER_LEVEL2 = 0.3f;
+    public static final float MAX_ASTEROID_SPAWN_TIMER_LEVEL2 = 0.7f;
 
     Animation[] rolls;
 
@@ -42,9 +42,8 @@ public class MainGameScreen implements Screen {
     float stateTime;
     float asteroidSpawnTimer;
     boolean paused = false;
-    private long startTime;
-    private boolean running;
-    private long elapsed;
+    boolean dragging;
+
 
     Music ingamemusic;
 
@@ -111,52 +110,45 @@ public class MainGameScreen implements Screen {
     @Override
     public void render(float delta) {
 
-        if(paused){
+
+        if (paused) {
             game.batch.begin();
             game.batch.draw(playingame, GokuDodge.WIDTH_DESKTOP - playingame.getWidth(), 20, playingame.getWidth(), playingame.getHeight());
             game.batch.end();
-            if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP  - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP  - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
-                paused = false;
-                ingamemusic.play();
-                try{
-                    Thread.sleep(100);
-                }
-                catch(InterruptedException e){
-                    e.printStackTrace();
-                }
+            if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                    paused = false;
+                    ingamemusic.play();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        }
-        else{
+        } else {
             game.batch.begin();
             game.batch.draw(pauseingame, GokuDodge.WIDTH_DESKTOP - pauseingame.getWidth(), 20, pauseingame.getWidth(), pauseingame.getHeight());
             game.batch.end();
-            if(ingamemusic.getPosition() > 0 && ingamemusic.getPosition() < 5) {
+            if (ingamemusic.getPosition() > 0 && ingamemusic.getPosition() < 5) {
                 generalUpdateLevelIntro(delta, level1);
-            }
-            else if (ingamemusic.getPosition() > 5 && ingamemusic.getPosition() < 35){
+            } else if (ingamemusic.getPosition() > 5 && ingamemusic.getPosition() < 35) {
                 generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL1, MAX_ASTEROID_SPAWN_TIMER_LEVEL1);
-            }
-            else if(ingamemusic.getPosition() > 35 && ingamemusic.getPosition() < 40){
+            } else if (ingamemusic.getPosition() > 35 && ingamemusic.getPosition() < 40) {
                 generalUpdateLevelIntro(delta, level2);
-            }
-            else if(ingamemusic.getPosition() > 40 && ingamemusic.getPosition() < 70){
+            } else if (ingamemusic.getPosition() > 40 && ingamemusic.getPosition() < 70) {
                 generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL2, MAX_ASTEROID_SPAWN_TIMER_LEVEL2);
-            }
-            else{
+            } else {
                 generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL2, MAX_ASTEROID_SPAWN_TIMER_LEVEL2);
             }
         }
 
-        System.out.println(ingamemusic.getPosition());
 
     }
 
 
-
-    public void generalUpdateLevelIntro (float delta, Texture texture){
-        if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP  - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP  - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+    public void generalUpdateLevelIntro(float delta, Texture texture) {
+        if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 paused = true;
                 ingamemusic.pause();
@@ -170,7 +162,9 @@ public class MainGameScreen implements Screen {
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             x -= SPEED * Gdx.graphics.getDeltaTime();
-
+            if (x < 0) {
+                x = 0;
+            }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             x += SPEED * Gdx.graphics.getDeltaTime();
@@ -195,38 +189,44 @@ public class MainGameScreen implements Screen {
         }
 
 
+        //clicked on sprite
+        // do something that vanish the object clicked
+        //if(touch.x < GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 + SHIP_WIDTH && touch.x > GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 && GokuDodge.HEIGHT_DESKTOP - touch.y < GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2 + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP - touch.y > GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2) {
+        //}
 
 
-            touch = new Vector2(game.cam.getInputInGameWorld().x, game.cam.getInputInGameWorld().y);
+        if (dragging) {
+            x = game.cam.getInputInGameWorld().x - SHIP_WIDTH / 2;
+            y = ((GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y) + SHIP_HEIGHT / 2);
+        }
 
-            //clicked on sprite
-            // do something that vanish the object clicked
-            //if(touch.x < GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 + SHIP_WIDTH && touch.x > GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 && GokuDodge.HEIGHT_DESKTOP - touch.y < GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2 + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP - touch.y > GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2) {
-            //}
 
-            if (game.cam.getInputInGameWorld().x < x + SHIP_WIDTH && game.cam.getInputInGameWorld().x > x && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < y + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP + game.cam.getInputInGameWorld().y > y) {
-                if (Gdx.input.isTouched()) {
-                    x = touch.x - SHIP_WIDTH / 2;
-                    y = ((GokuDodge.HEIGHT_DESKTOP - touch.y) + SHIP_HEIGHT / 2);
-                }
+        if (game.cam.getInputInGameWorld().x < x + SHIP_WIDTH && game.cam.getInputInGameWorld().x > x && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < y + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP + game.cam.getInputInGameWorld().y > y) {
+            if (Gdx.input.isTouched()) {
+                x = game.cam.getInputInGameWorld().x - SHIP_WIDTH / 2;
+                y = ((GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y) + SHIP_HEIGHT / 2);
+                dragging = true;
+            } else {
+                dragging = false;
             }
+        }
 
 
-            if (x < 0) {
-                x = 0;
-            }
+        if (x < 0) {
+            x = 0;
+        }
 
-            if (x + SHIP_WIDTH > GokuDodge.WIDTH_DESKTOP) {
-                x = GokuDodge.WIDTH_DESKTOP - SHIP_WIDTH;
-            }
+        if (x + SHIP_WIDTH > GokuDodge.WIDTH_DESKTOP) {
+            x = GokuDodge.WIDTH_DESKTOP - SHIP_WIDTH;
+        }
 
-            if (y + SHIP_HEIGHT > GokuDodge.HEIGHT_DESKTOP) {
-                y = GokuDodge.HEIGHT_DESKTOP - SHIP_HEIGHT;
-            }
+        if (y + SHIP_HEIGHT > GokuDodge.HEIGHT_DESKTOP / 2) {
+            y = GokuDodge.HEIGHT_DESKTOP / 2 - SHIP_HEIGHT;
+        }
 
-            if (y < 0) {
-                y = 0;
-            }
+        if (y < 0) {
+            y = 0;
+        }
 
 
         //asteroid spawn code
@@ -281,8 +281,8 @@ public class MainGameScreen implements Screen {
     }
 
 
-    public void generalUpdateLevel1(float delta, float minAsteroidSpawnTimer, float maxAsteroidSpawnTimer){
-        if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP  - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP  - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+    public void generalUpdateLevel1(float delta, float minAsteroidSpawnTimer, float maxAsteroidSpawnTimer) {
+        if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 paused = true;
                 ingamemusic.pause();
@@ -321,38 +321,46 @@ public class MainGameScreen implements Screen {
         }
 
 
+        touch = new Vector2(game.cam.getInputInGameWorld().x, game.cam.getInputInGameWorld().y);
+
+        //clicked on sprite
+        // do something that vanish the object clicked
+        //if(touch.x < GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 + SHIP_WIDTH && touch.x > GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 && GokuDodge.HEIGHT_DESKTOP - touch.y < GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2 + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP - touch.y > GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2) {
+        //}
 
 
-            touch = new Vector2(game.cam.getInputInGameWorld().x, game.cam.getInputInGameWorld().y);
+        if (dragging) {
+            x = game.cam.getInputInGameWorld().x - SHIP_WIDTH / 2;
+            y = ((GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y) + SHIP_HEIGHT / 2);
+        }
 
-            //clicked on sprite
-            // do something that vanish the object clicked
-            //if(touch.x < GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 + SHIP_WIDTH && touch.x > GokuDodge.WIDTH_DESKTOP/2 - SHIP_WIDTH/2 && GokuDodge.HEIGHT_DESKTOP - touch.y < GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2 + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP - touch.y > GokuDodge.HEIGHT_DESKTOP/2 - SHIP_HEIGHT/2) {
-            //}
 
-            if (game.cam.getInputInGameWorld().x < x + SHIP_WIDTH && game.cam.getInputInGameWorld().x > x && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < y + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP + game.cam.getInputInGameWorld().y > y) {
-                if (Gdx.input.isTouched()) {
-                    x = touch.x - SHIP_WIDTH / 2;
-                    y = ((GokuDodge.HEIGHT_DESKTOP - touch.y) + SHIP_HEIGHT / 2);
-                }
+        if (game.cam.getInputInGameWorld().x < x + SHIP_WIDTH && game.cam.getInputInGameWorld().x > x && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < y + SHIP_HEIGHT && GokuDodge.HEIGHT_DESKTOP + game.cam.getInputInGameWorld().y > y) {
+            if (Gdx.input.isTouched()) {
+                x = game.cam.getInputInGameWorld().x - SHIP_WIDTH / 2;
+                y = ((GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y) + SHIP_HEIGHT / 2);
+                dragging = true;
+            } else {
+                dragging = false;
             }
+        }
 
 
-            if (x < 0) {
-                x = 0;
-            }
+        if (x < 0) {
+            x = 0;
+        }
 
-            if (x + SHIP_WIDTH > GokuDodge.WIDTH_DESKTOP) {
-                x = GokuDodge.WIDTH_DESKTOP - SHIP_WIDTH;
-            }
+        if (x + SHIP_WIDTH > GokuDodge.WIDTH_DESKTOP) {
+            x = GokuDodge.WIDTH_DESKTOP - SHIP_WIDTH;
+        }
 
-            if (y + SHIP_HEIGHT > GokuDodge.HEIGHT_DESKTOP) {
-                y = GokuDodge.HEIGHT_DESKTOP - SHIP_HEIGHT;
-            }
+        if (y + SHIP_HEIGHT > GokuDodge.HEIGHT_DESKTOP / 2) {
+            y = GokuDodge.HEIGHT_DESKTOP / 2 - SHIP_HEIGHT;
+        }
 
-            if (y < 0) {
-                y = 0;
-            }
+        if (y < 0) {
+            y = 0;
+        }
 
 
         //asteroid spawn code
