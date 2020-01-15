@@ -22,7 +22,7 @@ import java.util.Random;
 
 import javax.swing.text.View;
 
-public class MainGameScreen implements Screen {
+public class MainGameScreen implements Screen, ApplicationListener, InputProcessor{
 
     public static final float SPEED = 500;
 
@@ -62,6 +62,7 @@ public class MainGameScreen implements Screen {
     Texture blank;
     private Texture level1, level2;
     private Texture playingame, pauseingame, pausedbanner, mainMenuBanner, resume;
+    private Texture soundButtonPlay, soundButtonMute;
 
     CollisionRect playerRect;
 
@@ -105,6 +106,12 @@ public class MainGameScreen implements Screen {
         ingamemusic.play();
         ingamemusic.setLooping(true);
         state = State.RUN;
+
+        Gdx.input.setInputProcessor(this);
+        Gdx.input.setCatchKey(Input.Keys.BACK, true);
+
+        soundButtonPlay = new Texture("playsound.png");
+        soundButtonMute = new Texture("mute.png");
 
     }
 
@@ -174,6 +181,37 @@ public class MainGameScreen implements Screen {
                 game.batch.end();
                 game.setScreen(new MainMenuScreen(game));
                 return;
+            }
+        }
+
+        //Mute
+        if(ingamemusic.getVolume() == 1f) {
+            game.batch.draw(soundButtonPlay, GokuDodge.WIDTH_DESKTOP / 16 - soundButtonPlay.getWidth() / 2, 20, soundButtonPlay.getWidth(), soundButtonPlay.getHeight());
+            if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP / 16 - soundButtonPlay.getWidth() / 2 + soundButtonPlay.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP / 16 - soundButtonPlay.getWidth() / 2 && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + soundButtonPlay.getHeight() && game.cam.getInputInGameWorld().y > 20) {
+                if (Gdx.input.justTouched()) {
+                    ingamemusic.setVolume(0f);
+                    System.out.println("hi1");
+                }
+            }
+        }
+//            else {
+//                if(Gdx.input.isTouched()) {
+//                    game.batch.draw(transparent, GokuDodge.WIDTH_DESKTOP / 16 - soundButtonMute.getWidth() / 2, 50, soundButtonMute.getWidth(), soundButtonMute.getHeight());
+//                    game.batch.draw(soundButtonPlay, GokuDodge.WIDTH_DESKTOP / 16 - soundButtonPlay.getWidth() / 2, 50, soundButtonPlay.getWidth(), soundButtonPlay.getHeight());
+//                    music.setVolume(1f);
+//                    System.out.println("hi2");
+//                }
+//            }
+
+
+        //Unmute
+        else if (ingamemusic.getVolume() == 0f) {
+            game.batch.draw(soundButtonMute, GokuDodge.WIDTH_DESKTOP / 16 - soundButtonMute.getWidth() / 2, 20, soundButtonMute.getWidth(), soundButtonMute.getHeight());
+            if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP / 16 - soundButtonMute.getWidth() / 2 + soundButtonMute.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP / 16 - soundButtonMute.getWidth() / 2 && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + soundButtonMute.getHeight() && game.cam.getInputInGameWorld().y > 20) {
+                if (Gdx.input.justTouched()) {
+                    ingamemusic.setVolume(1f);
+                    System.out.println("hi3");
+                }
             }
         }
 
@@ -444,6 +482,56 @@ public class MainGameScreen implements Screen {
         game.batch.end();
     }
 
+    @Override
+    public boolean keyDown(int keycode) {
+        if(keycode == Input.Keys.BACK){
+            if(state == State.RUN) {
+                state = State.PAUSE;
+                return true;
+            }
+            else if (state == State.PAUSE){
+                game.setScreen(new MainMenuScreen(game));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
+    }
+
 
     public enum State {
         PAUSE,
@@ -452,7 +540,17 @@ public class MainGameScreen implements Screen {
 
 
     @Override
+    public void create() {
+
+    }
+
+    @Override
     public void resize(int width, int height) {
+
+    }
+
+    @Override
+    public void render() {
 
     }
 

@@ -1,7 +1,9 @@
 package com.rafa.gokudodge.screens;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
@@ -11,7 +13,7 @@ import com.rafa.gokudodge.GokuDodge;
 
 import javax.xml.soap.Text;
 
-public class GameOverScreen implements Screen {
+public class GameOverScreen implements Screen, ApplicationListener, InputProcessor {
 
     public static final int BANNER_WIDTH = 350;
     public static final int BANNER_HEIGHT = 100;
@@ -35,6 +37,9 @@ public class GameOverScreen implements Screen {
         tryAgainInactive = new Texture("try-again-inactive.png");
         mainMenuInactive = new Texture("main-menu-inactive.png");
         gameovermusic = Gdx.audio.newMusic(Gdx.files.internal("gameovermusic.mp3"));
+
+        Gdx.input.setInputProcessor(this);
+        Gdx.input.setCatchKey(Input.Keys.BACK, true);
     }
 
 
@@ -79,8 +84,18 @@ public class GameOverScreen implements Screen {
     }
 
     @Override
+    public void create() {
+
+    }
+
+    @Override
     public void resize(int width, int height) {
         game.cam.update(width, height);
+    }
+
+    @Override
+    public void render() {
+
     }
 
     @Override
@@ -101,5 +116,50 @@ public class GameOverScreen implements Screen {
     @Override
     public void dispose() {
         gameovermusic.dispose();
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if(keycode == Input.Keys.BACK){
+            gameovermusic.stop();
+            game.setScreen(new MainMenuScreen(game));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }
