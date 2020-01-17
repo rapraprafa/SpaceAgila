@@ -17,6 +17,7 @@ import com.rafa.gokudodge.screens.MainMenuScreen;
 import com.rafa.gokudodge.screens.SplashScreen;
 import com.rafa.gokudodge.tools.GameCamera;
 import com.rafa.gokudodge.tools.ScrollingBackground;
+import com.rafa.gokudodge.tools.ScrollingStory;
 
 
 public class GokuDodge extends Game {
@@ -28,6 +29,7 @@ public class GokuDodge extends Game {
 
     public SpriteBatch batch;
     public ScrollingBackground scrollingBackground;
+    public ScrollingStory scrollingStory;
     public GameCamera cam;
 
 
@@ -79,6 +81,7 @@ public class GokuDodge extends Game {
         IS_MOBILE = true;
 
         this.scrollingBackground = new ScrollingBackground();
+        this.scrollingStory = new ScrollingStory();
 
 //        if (main.health == 0){
 //            this.setScreen(new GameOverScreen(this,0));
@@ -99,6 +102,7 @@ public class GokuDodge extends Game {
 
     public void resize(int width, int height) {
         this.scrollingBackground.resize(width, height);
+        this.scrollingStory.resize(width, height);
         cam.update(width, height);
         super.resize(width, height);
     }

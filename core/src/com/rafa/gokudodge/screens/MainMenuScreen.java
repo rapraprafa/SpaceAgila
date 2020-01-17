@@ -1,18 +1,19 @@
 package com.rafa.gokudodge.screens;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.rafa.gokudodge.GokuDodge;
+import com.rafa.gokudodge.tools.ScrollingStory;
 
+import java.awt.GradientPaint;
+import java.awt.image.BufferedImage;
 
 
 public class MainMenuScreen implements Screen, ApplicationListener, InputProcessor {
@@ -34,6 +35,13 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
     Texture soundButtonPlay;
     Texture soundButtonMute;
     Texture transparent;
+
+    private static final int SCREEN_WIDTH = 800;
+    private static final int SCREEN_HEIGHT = 600;
+
+    private GradientPaint gradientPaing;
+    private BufferedImage textImage;
+    private double textY;
 
 
     public MainMenuScreen(final GokuDodge game) {
@@ -62,7 +70,6 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
                     Gdx.app.exit();
                 }
 
-
                 //Play Game button
                 int xPlay = GokuDodge.WIDTH_DESKTOP / 2 - PLAY_BUTTON_WIDTH / 2;
                 if ((game.cam.getInputInGameWorld().x < xPlay + PLAY_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xPlay && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < PLAY_BUTTON_Y + PLAY_BUTTON_HEIGHT && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > PLAY_BUTTON_Y)) {
@@ -76,6 +83,7 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
         });
 
     }
+
 
     @Override
     public void show() {
@@ -151,7 +159,13 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
 //        }
         game.batch.end();
 
+    }
 
+    public void storyScreen(){
+
+    }
+
+    public void howToPlayScreen(){
 
     }
 

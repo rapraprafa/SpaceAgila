@@ -6,29 +6,34 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.rafa.gokudodge.GokuDodge;
 import com.rafa.gokudodge.tools.CollisionRect;
 
-public class Asteroid {
+public class Comet {
 
-    public static int SPEED = 300;
-    public static final int WIDTH = 16;
-    public static final int HEIGHT = 16;
+    public static int SPEED = 400;
+    public static final int WIDTH = 32;
+    public static final int HEIGHT = 32;
     private static Texture texture;
 
     float x, y;
     CollisionRect rect;
     public boolean remove = false;
 
-    public Asteroid(float x) {
+    public Comet(float x) {
         this.x = x;
         this.y = GokuDodge.HEIGHT_DESKTOP;
 
         this.rect = new CollisionRect(x, y, WIDTH, HEIGHT);
         if (texture == null) {
-            texture = new Texture("medium_asteroid.png");
+            texture = new Texture("comet_notgif.png");
         }
     }
 
     public void update(float deltaTime) {
-        y -= SPEED * deltaTime;
+        y -= (SPEED * deltaTime) + (deltaTime/4);
+        x -= SPEED * deltaTime - (deltaTime * 2);
+
+        if (x < -WIDTH) {
+            remove = true;
+        }
         if (y < -HEIGHT) {
             remove = true;
         }
