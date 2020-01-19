@@ -8,7 +8,7 @@ import com.rafa.gokudodge.tools.CollisionRect;
 
 public class Comet {
 
-    public static int SPEED = 400;
+    public static int SPEED = 300;
     public static final int WIDTH = 32;
     public static final int HEIGHT = 32;
     private static Texture texture;
@@ -18,7 +18,7 @@ public class Comet {
     public boolean remove = false;
 
     public Comet(float x) {
-        this.x = x;
+        this.x = x + GokuDodge.WIDTH_DESKTOP;
         this.y = GokuDodge.HEIGHT_DESKTOP;
 
         this.rect = new CollisionRect(x, y, WIDTH, HEIGHT);
@@ -28,8 +28,8 @@ public class Comet {
     }
 
     public void update(float deltaTime) {
-        y -= (SPEED * deltaTime) + (deltaTime/4);
-        x -= SPEED * deltaTime - (deltaTime * 2);
+        y -= (SPEED * deltaTime) + (deltaTime*4);
+        x -= SPEED * deltaTime;
 
         if (x < -WIDTH) {
             remove = true;

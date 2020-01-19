@@ -164,7 +164,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
                 }
                 else if (ingamemusic.getPosition() > 5 && ingamemusic.getPosition() < 35) {
                     normal_asteroid_enable = true;
-                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL, MAX_ASTEROID_SPAWN_TIMER_LEVEL, 0, 0);
+                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL, MAX_ASTEROID_SPAWN_TIMER_LEVEL, 0, 0 ,3f,5f);
                 }
 
                 //level2
@@ -172,7 +172,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
                     generalUpdateLevelIntro(delta, level2);
                 }
                 else if (ingamemusic.getPosition() > 40 && ingamemusic.getPosition() < 70) {
-                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0, 0);
+                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0, 0,0,0);
                 }
 
                 //level3
@@ -181,7 +181,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
                 }
                 else if (ingamemusic.getPosition() > 75 && ingamemusic.getPosition() < 105) {
                     Asteroid.SPEED = 400;
-                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0, 0);
+                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0, 0,0,0);
                 }
 
                 //level4
@@ -190,7 +190,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
                     generalUpdateLevelIntro(delta, level4);
                 }
                 else if (ingamemusic.getPosition() > 110 && ingamemusic.getPosition() < 140) {
-                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0, 0);
+                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0, 0,0,0);
                 }
 
                 //level5
@@ -200,7 +200,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
                 else if (ingamemusic.getPosition() > 145 && ingamemusic.getPosition() < 175) {
                     big_asteroid_enable = true;
                     Asteroid.SPEED = 300;
-                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0.5f, 1f);
+                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0.5f, 1f,0,0);
                 }
 
                 //level6
@@ -208,7 +208,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
                     generalUpdateLevelIntro(delta, level6);
                 }
                 else if (ingamemusic.getPosition() > 180 && ingamemusic.getPosition() < 210) {
-                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0.3f, 0.7f);
+                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0.3f, 0.7f,0,0);
                 }
 
                 //level7
@@ -217,7 +217,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
                 }
                 else if (ingamemusic.getPosition() > 215 && ingamemusic.getPosition() < 245) {
                     Big_Asteroid.SPEED = 400;
-                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0.3f, 0.7f);
+                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.3f, 0.3f, 0.7f,0,0);
                 }
 
                 //level8
@@ -228,7 +228,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
                     enable_bonuslife = true;
                     big_asteroid_enable = false;
                     normal_asteroid_enable = false;
-                    generalUpdateLevel1(delta, 0, 0, 0, 0);
+                    generalUpdateLevel1(delta, 0, 0, 0, 0,0,0);
                 }
 
                 //level9
@@ -240,7 +240,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
                     enable_comet = true;
                     big_asteroid_enable = true;
                     normal_asteroid_enable = true;
-                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.35f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.35f, 0.3f, 0.7f);
+                    generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL - 0.35f, MAX_ASTEROID_SPAWN_TIMER_LEVEL - 0.35f, 0.3f, 0.7f,3f,5f);
                 }
 
                 else{
@@ -530,7 +530,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
     }
 
 
-    public void generalUpdateLevel1(float delta, float minAsteroidSpawnTimer, float maxAsteroidSpawnTimer, float big_asteroid_MIN_SpawnTimer, float big_asteroid_MAX_SpawnTimer) {
+    public void generalUpdateLevel1(float delta, float minAsteroidSpawnTimer, float maxAsteroidSpawnTimer, float big_asteroid_MIN_SpawnTimer, float big_asteroid_MAX_SpawnTimer, float minCometSpawnTimer, float maxCometSpawnTimer) {
 
         if (game.cam.getInputInGameWorld().x < GokuDodge.WIDTH_DESKTOP - playingame.getWidth() + playingame.getWidth() && game.cam.getInputInGameWorld().x > GokuDodge.WIDTH_DESKTOP - playingame.getWidth() && GokuDodge.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < 20 + playingame.getHeight() && game.cam.getInputInGameWorld().y > 20 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK) || Gdx.input.isKeyJustPressed(Input.Keys.HOME)) {
@@ -670,7 +670,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
             //comet spawn code
             comets_SpawnTimer -= delta;
             if (comets_SpawnTimer <= 0) {
-                comets_SpawnTimer= random.nextFloat() * (maxAsteroidSpawnTimer - minAsteroidSpawnTimer) + minAsteroidSpawnTimer;
+                comets_SpawnTimer= random.nextFloat() * (maxCometSpawnTimer - minCometSpawnTimer) + minCometSpawnTimer;
                 comets.add(new Comet(random.nextInt(GokuDodge.WIDTH_DESKTOP - Asteroid.WIDTH)));
             }
             //asteroid update code
