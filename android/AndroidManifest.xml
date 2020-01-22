@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.rafa.gokudodge">
-
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.rafa.spaceagila">
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <application
         android:allowBackup="true"
         android:appCategory="game"
         android:icon="@drawable/ic_launcher"
         android:isGame="true"
-        android:label="@string/app_name"
-        android:theme="@style/GdxTheme">
+        android:label="Space Agila"
+        android:theme="@style/GdxTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name="com.rafa.gokudodge.AndroidLauncher"
+            android:name="com.rafa.spaceagila.AndroidLauncher"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
@@ -20,5 +22,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

@@ -17,7 +17,7 @@ android {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
-        applicationId "com.rafa.gokudodge"
+        applicationId "com.rafa.spaceagila"
         minSdkVersion 14
         targetSdkVersion 29
         versionCode 1
@@ -86,5 +86,5 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.rafa.gokudodge/com.rafa.gokudodge.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.rafa.spaceagila/com.rafa.spaceagila.AndroidLauncher'
 }
