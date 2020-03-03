@@ -36,7 +36,6 @@ public class SpaceAgila extends Game {
         batch = new SpriteBatch();
         cam = new GameCamera(WIDTH_DESKTOP, HEIGHT_DESKTOP);
         setScreen(new SplashScreen());
-        connectSocket();
 
         final long splash_start_time = System.currentTimeMillis();
         new Thread(new Runnable() {
@@ -78,8 +77,17 @@ public class SpaceAgila extends Game {
 
     public void connectSocket(){
         try{
-            socket = IO.socket("http://localhost:8080");
+            socket = IO.socket("http://192.168.43.72:3000");
             socket.connect();
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+    }
+
+    public void disconnectSocket(){
+        try{
+            socket.disconnect();
         }
         catch(Exception e){
             System.out.println(e);

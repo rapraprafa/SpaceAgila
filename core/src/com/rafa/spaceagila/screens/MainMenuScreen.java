@@ -108,8 +108,10 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
                     //Play button
                     int xPlay = SpaceAgila.WIDTH_DESKTOP / 2 - PLAY_BUTTON_WIDTH / 2;
                     if ((game.cam.getInputInGameWorld().x < xPlay + PLAY_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xPlay && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < PLAY_BUTTON_Y + PLAY_BUTTON_HEIGHT && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > PLAY_BUTTON_Y)) {
+                        game.connectSocket();
                         mainMenuScreen.dispose();
                         game.setScreen(new MainGameScreen(game));
+
                     }
                 }
                 return super.touchDown(screenX, screenY, pointer, button);

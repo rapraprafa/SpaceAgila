@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
+
 public class MainGameScreen implements Screen, ApplicationListener, InputProcessor{
 
     public static final float SPEED = 500;
@@ -49,6 +50,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
     private float big_asteroidSpawnTimer;
 
     float comets_SpawnTimer;
+
 
 
     private int roll;
@@ -381,6 +383,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
 
         if (game.cam.getInputInGameWorld().x < xTryAgain + GameOverScreen.BANNER_WIDTH/2 && game.cam.getInputInGameWorld().x > xTryAgain && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < yTryAgain - 100 + GameOverScreen.BANNER_HEIGHT/2 && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > yTryAgain - 100) {
             if (Gdx.input.justTouched()) {
+                game.disconnectSocket();
                 this.dispose();
                 game.batch.end();
                 game.setScreen(new MainMenuScreen(game));
