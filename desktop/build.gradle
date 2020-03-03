@@ -7,6 +7,19 @@ sourceSets.main.resources.srcDirs = ["../android/assets"]
 project.ext.mainClassName = "com.rafa.spaceagila.desktop.DesktopLauncher"
 project.ext.assetsDir = new File("../android/assets")
 
+task deleteJar(type: Delete) {
+    delete 'libs/jars/logmanagementlib.jar'
+}
+
+task createJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('libs/jars/')
+    include('classes.jar')
+    rename('classes.jar', 'logmanagementlib.jar')
+}
+
+createJar.dependsOn(deleteJar, build)
+
 task run(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath

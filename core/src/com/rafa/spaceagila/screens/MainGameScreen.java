@@ -182,13 +182,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
                     generalUpdateLevelIntro(delta, level1);
                 }
                 else if (ingamemusic.getPosition() >= 5 && ingamemusic.getPosition() < 35) {
-//                    Asteroid.SPEED = 400;
-//                    Big_Asteroid.SPEED = 400;
-//                    enable_bonuslife = true;
-//                    enable_comet = true;
                     normal_asteroid_enable = true;
-//                    big_asteroid_enable = true;
-//                    ingamemusic.setPosition(500);
                     generalUpdateLevel1(delta, MIN_ASTEROID_SPAWN_TIMER_LEVEL, MAX_ASTEROID_SPAWN_TIMER_LEVEL , 0.3f, 0.7f,3f,5f,0,0);
                 }
 

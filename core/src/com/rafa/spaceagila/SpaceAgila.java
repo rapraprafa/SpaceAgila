@@ -10,6 +10,8 @@ import com.rafa.spaceagila.screens.MainMenuScreen;
 import com.rafa.spaceagila.screens.SplashScreen;
 import com.rafa.spaceagila.tools.GameCamera;
 import com.rafa.spaceagila.tools.ScrollingBackground;
+import io.socket.client.IO;
+import io.socket.client.Socket;
 
 
 public class SpaceAgila extends Game {
@@ -23,7 +25,7 @@ public class SpaceAgila extends Game {
     public ScrollingBackground scrollingBackground;
     public GameCamera cam;
 
-
+    private Socket socket;
 
     private static long SPLASH_MINIMUM_MILLIS = 5000L;
 
@@ -34,6 +36,7 @@ public class SpaceAgila extends Game {
         batch = new SpriteBatch();
         cam = new GameCamera(WIDTH_DESKTOP, HEIGHT_DESKTOP);
         setScreen(new SplashScreen());
+        connectSocket();
 
         final long splash_start_time = System.currentTimeMillis();
         new Thread(new Runnable() {
@@ -73,6 +76,15 @@ public class SpaceAgila extends Game {
 //        }
     }
 
+    public void connectSocket(){
+        try{
+            socket = IO.socket("http://localhost:8080");
+            socket.connect();
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+    }
 
     @Override
     public void dispose() {
