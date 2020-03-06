@@ -17,17 +17,20 @@ import java.awt.image.BufferedImage;
 
 public class MainMenuScreen implements Screen, ApplicationListener, InputProcessor {
 
-    public static final int BACK_WIDTH = 204;
-    public static final int BACK_HEIGHT = 82;
+    public static final int BACK_WIDTH = 190;
+    public static final int BACK_HEIGHT = 80;
 
-    private static final int PLAY_BUTTON_WIDTH = 175;
-    private static final int PLAY_BUTTON_HEIGHT = 87;
+    private static final int PLAY_BUTTON_WIDTH = 160;
+    private static final int PLAY_BUTTON_HEIGHT = 80;
 
-    private static final int EXIT_BUTTON_WIDTH = 175;
-    private static final int EXIT_BUTTON_HEIGHT = 87;
+    private static final int MULTIPLAYER_BUTTON_WIDTH = 300;
+    private static final int MULTIPLAYER_BUTTON_HEIGHT = 80;
 
-    private static final int ABOUT_BUTTON_WIDTH = 196;
-    private static final int ABOUT_BUTTON_HEIGHT = 98;
+    private static final int EXIT_BUTTON_WIDTH = 160;
+    private static final int EXIT_BUTTON_HEIGHT = 70;
+
+    private static final int ABOUT_BUTTON_WIDTH = 180;
+    private static final int ABOUT_BUTTON_HEIGHT = 80;
 
     private static final int SPACE_WIDTH = 337;
     private static final int SPACE_HEIGHT = 172;
@@ -35,10 +38,10 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
     private static final int AGILA_WIDTH = 337;
     private static final int AGILA_HEIGHT = 172;
 
-
-    private static final int PLAY_BUTTON_Y = 255;
+    private static final int PLAY_BUTTON_Y = 300;
+    private static final int MULTIPLAYER_BUTTON_Y = 225;
     private static final int ABOUT_BUTTON_Y = 150;
-    private static final int EXIT_BUTTON_Y = 55;
+    private static final int EXIT_BUTTON_Y = 75;
 
     Music mainmenumusic;
 
@@ -47,18 +50,21 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
     final SpaceAgila game;
     Texture playButtonActive,tryc, playButtonInactive, exitButtonActive, exitButtonInactive, soundButtonPlay, soundButtonMute, transparent, about, aboutInactive, space, agila;
     Texture backInactive, back;
+    Texture multiplayer;
+    Texture multiplayer_active;
 
     private static final int SCREEN_WIDTH = 800;
     private static final int SCREEN_HEIGHT = 600;
 
+    private boolean endingbackground;
     private GradientPaint gradientPaing;
     private BufferedImage textImage;
     private double textY;
-    boolean endingbackground;
-
 
     public MainMenuScreen(final SpaceAgila game) {
         this.game = game;
+        multiplayer_active = new Texture("multiplayer_active.png");
+        multiplayer = new Texture("multiplayer.png");
         space = new Texture("space75.png");
         agila = new Texture("agila75.png");
         about = new Texture("about.png");
@@ -89,8 +95,6 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
 
         Gdx.input.setInputProcessor(new InputAdapter() {
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-
-
                 //About button
                 int xAbout = SpaceAgila.WIDTH_DESKTOP / 2 - PLAY_BUTTON_WIDTH / 2;
                 if ((game.cam.getInputInGameWorld().x < xAbout + ABOUT_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xAbout && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < ABOUT_BUTTON_Y + ABOUT_BUTTON_HEIGHT && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > ABOUT_BUTTON_Y)) {
@@ -104,13 +108,19 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
                         game.dispose();
                         Gdx.app.exit();
                     }
-
                     //Play button
                     int xPlay = SpaceAgila.WIDTH_DESKTOP / 2 - PLAY_BUTTON_WIDTH / 2;
                     if ((game.cam.getInputInGameWorld().x < xPlay + PLAY_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xPlay && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < PLAY_BUTTON_Y + PLAY_BUTTON_HEIGHT && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > PLAY_BUTTON_Y)) {
-                        game.connectSocket();
                         mainMenuScreen.dispose();
                         game.setScreen(new MainGameScreen(game));
+
+                    }
+
+                    //Multiplayer button
+                    int xMultiplayer = SpaceAgila.WIDTH_DESKTOP / 2 - MULTIPLAYER_BUTTON_WIDTH / 2;
+                    if ((game.cam.getInputInGameWorld().x < xMultiplayer + MULTIPLAYER_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xMultiplayer && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < MULTIPLAYER_BUTTON_Y + MULTIPLAYER_BUTTON_HEIGHT && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > MULTIPLAYER_BUTTON_Y)) {
+                        mainMenuScreen.dispose();
+                        game.setScreen(new MultiplayerGameScreen1(game));
 
                     }
                 }
@@ -120,7 +130,6 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
         });
 
     }
-
 
 
     public void mainStoryScreen(float delta){
@@ -162,10 +171,7 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
         mainmenumusic.play();
 
         game.scrollingBackground.updateAndRender(delta, game.batch);
-
-        int xExit = SpaceAgila.WIDTH_DESKTOP / 2 - EXIT_BUTTON_WIDTH / 2;
-        int xPlay = SpaceAgila.WIDTH_DESKTOP / 2 - PLAY_BUTTON_WIDTH / 2;
-        int xAbout = SpaceAgila.WIDTH_DESKTOP / 2 - ABOUT_BUTTON_WIDTH / 2;
+        //title
         int xSpace = SpaceAgila.WIDTH_DESKTOP / 2 - SPACE_WIDTH / 2;
         int ySpace = SpaceAgila.HEIGHT_DESKTOP - 200;
         int xAgila = SpaceAgila.WIDTH_DESKTOP / 2 - AGILA_WIDTH / 2;
@@ -174,22 +180,38 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
         game.batch.draw(space, xSpace, ySpace, SPACE_WIDTH, SPACE_HEIGHT);
         game.batch.draw(agila, xAgila, yAgila, AGILA_WIDTH, AGILA_HEIGHT);
 
-        if (game.cam.getInputInGameWorld().x < xExit + EXIT_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xExit && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < EXIT_BUTTON_Y + EXIT_BUTTON_HEIGHT && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > EXIT_BUTTON_Y) {
+        //buttons
+        int xExit = SpaceAgila.WIDTH_DESKTOP / 2 - EXIT_BUTTON_WIDTH / 2;
+        int xPlay = SpaceAgila.WIDTH_DESKTOP / 2 - PLAY_BUTTON_WIDTH / 2;
+        int xAbout = SpaceAgila.WIDTH_DESKTOP / 2 - ABOUT_BUTTON_WIDTH / 2;
+        int xMultiplayer = SpaceAgila.WIDTH_DESKTOP / 2 - MULTIPLAYER_BUTTON_WIDTH / 2;
 
-            game.batch.draw(exitButtonInactive, xExit, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
-        } else {
-            game.batch.draw(exitButtonActive, xExit, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
-        }
+        //play
         if (game.cam.getInputInGameWorld().x < xPlay + PLAY_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xPlay && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < PLAY_BUTTON_Y + PLAY_BUTTON_HEIGHT && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > PLAY_BUTTON_Y) {
             game.batch.draw(playButtonInactive, xPlay, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
         } else {
             game.batch.draw(playButtonActive, xPlay, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
         }
+        //multiplayer
+        if (game.cam.getInputInGameWorld().x < xMultiplayer + MULTIPLAYER_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xMultiplayer && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < MULTIPLAYER_BUTTON_Y + MULTIPLAYER_BUTTON_HEIGHT && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > MULTIPLAYER_BUTTON_Y) {
+            game.batch.draw(multiplayer_active, xMultiplayer, MULTIPLAYER_BUTTON_Y, MULTIPLAYER_BUTTON_WIDTH, MULTIPLAYER_BUTTON_HEIGHT);
+        } else {
+            game.batch.draw(multiplayer, xMultiplayer, MULTIPLAYER_BUTTON_Y, MULTIPLAYER_BUTTON_WIDTH, MULTIPLAYER_BUTTON_HEIGHT);
+        }
+        //about
         if (game.cam.getInputInGameWorld().x < xAbout + ABOUT_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xAbout && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < ABOUT_BUTTON_Y + ABOUT_BUTTON_HEIGHT && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > ABOUT_BUTTON_Y) {
             game.batch.draw(aboutInactive, xAbout, ABOUT_BUTTON_Y, ABOUT_BUTTON_WIDTH, ABOUT_BUTTON_HEIGHT);
         } else {
             game.batch.draw(about, xAbout, ABOUT_BUTTON_Y, ABOUT_BUTTON_WIDTH, ABOUT_BUTTON_HEIGHT);
         }
+        //exit
+        if (game.cam.getInputInGameWorld().x < xExit + EXIT_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xExit && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < EXIT_BUTTON_Y + EXIT_BUTTON_HEIGHT && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > EXIT_BUTTON_Y) {
+            game.batch.draw(exitButtonInactive, xExit, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
+        } else {
+            game.batch.draw(exitButtonActive, xExit, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
+        }
+
+
 
         //Mute
         if(mainmenumusic.getVolume() == 1f) {

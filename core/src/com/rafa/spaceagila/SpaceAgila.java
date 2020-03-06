@@ -10,9 +10,6 @@ import com.rafa.spaceagila.screens.MainMenuScreen;
 import com.rafa.spaceagila.screens.SplashScreen;
 import com.rafa.spaceagila.tools.GameCamera;
 import com.rafa.spaceagila.tools.ScrollingBackground;
-import io.socket.client.IO;
-import io.socket.client.Socket;
-
 
 public class SpaceAgila extends Game {
 
@@ -21,11 +18,12 @@ public class SpaceAgila extends Game {
     public static final int HEIGHT_DESKTOP = 720;
     public static boolean IS_MOBILE = false;
 
+    public static int no_of_players = 0;
+
     public SpriteBatch batch;
     public ScrollingBackground scrollingBackground;
     public GameCamera cam;
 
-    private Socket socket;
 
     private static long SPLASH_MINIMUM_MILLIS = 5000L;
 
@@ -75,24 +73,7 @@ public class SpaceAgila extends Game {
 //        }
     }
 
-    public void connectSocket(){
-        try{
-            socket = IO.socket("http://192.168.43.72:3000");
-            socket.connect();
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
-    }
 
-    public void disconnectSocket(){
-        try{
-            socket.disconnect();
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
-    }
 
     @Override
     public void dispose() {
