@@ -50,11 +50,11 @@ public class SpaceAgila extends Game {
                                     new Timer.Task() {
                                         @Override
                                         public void run() {
-                                            SpaceAgila.this.setScreen(new MainMenuScreen(SpaceAgila.this));
+                                            SpaceAgila.this.setScreen(new MainMenuScreen(SpaceAgila.this, 1f));
                                         }
                                     }, (float)(SpaceAgila.SPLASH_MINIMUM_MILLIS - splash_elapsed_time) / 1000f);
                         } else {
-                            SpaceAgila.this.setScreen(new MainMenuScreen(SpaceAgila.this));
+                            SpaceAgila.this.setScreen(new MainMenuScreen(SpaceAgila.this, 1f));
                         }
                     }
                 });

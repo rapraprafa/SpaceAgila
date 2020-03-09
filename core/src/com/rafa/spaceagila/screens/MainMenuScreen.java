@@ -61,7 +61,7 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
     private BufferedImage textImage;
     private double textY;
 
-    public MainMenuScreen(final SpaceAgila game) {
+    public MainMenuScreen(final SpaceAgila game, float volume) {
         this.game = game;
         multiplayer_active = new Texture("multiplayer_active.png");
         multiplayer = new Texture("multiplayer.png");
@@ -90,6 +90,7 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
         Gdx.input.setCatchKey(Input.Keys.BACK, true);
 
         mainmenumusic = Gdx.audio.newMusic(Gdx.files.internal("gamemusic.mp3"));
+        mainmenumusic.setVolume(volume);
 
         final MainMenuScreen mainMenuScreen = this;
 
@@ -112,15 +113,14 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
                     int xPlay = SpaceAgila.WIDTH_DESKTOP / 2 - PLAY_BUTTON_WIDTH / 2;
                     if ((game.cam.getInputInGameWorld().x < xPlay + PLAY_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xPlay && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < PLAY_BUTTON_Y + PLAY_BUTTON_HEIGHT && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > PLAY_BUTTON_Y)) {
                         mainMenuScreen.dispose();
-                        game.setScreen(new MainGameScreen(game));
-
+                        game.setScreen(new MainGameScreen(game, getVolume()));
                     }
 
                     //Multiplayer button
                     int xMultiplayer = SpaceAgila.WIDTH_DESKTOP / 2 - MULTIPLAYER_BUTTON_WIDTH / 2;
                     if ((game.cam.getInputInGameWorld().x < xMultiplayer + MULTIPLAYER_BUTTON_WIDTH && game.cam.getInputInGameWorld().x > xMultiplayer && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y < MULTIPLAYER_BUTTON_Y + MULTIPLAYER_BUTTON_HEIGHT && SpaceAgila.HEIGHT_DESKTOP - game.cam.getInputInGameWorld().y > MULTIPLAYER_BUTTON_Y)) {
                         mainMenuScreen.dispose();
-                        game.setScreen(new MultiplayerGameScreen1(game));
+                        game.setScreen(new MultiplayerGameScreen1(game, getVolume()));
 
                     }
                 }
@@ -239,6 +239,10 @@ public class MainMenuScreen implements Screen, ApplicationListener, InputProcess
             mainStoryScreen(delta);
         }
         game.batch.end();
+    }
+
+    public float getVolume(){
+        return mainmenumusic.getVolume();
     }
 
     @Override

@@ -64,7 +64,7 @@ public class VictoryScreen implements Screen, ApplicationListener, InputProcesso
             game.batch.draw(main_menu_inactive, xTryAgain, yTryAgain, BANNER_WIDTH/2, BANNER_HEIGHT/2);
             if (Gdx.input.justTouched() || Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                 this.dispose();
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new MainMenuScreen(game, gameovermusic.getVolume()));
                 return;
             }
         } else {
@@ -114,7 +114,7 @@ public class VictoryScreen implements Screen, ApplicationListener, InputProcesso
     public boolean keyDown(int keycode) {
         if(keycode == Input.Keys.BACK){
             gameovermusic.stop();
-            game.setScreen(new MainMenuScreen(game) );
+            game.setScreen(new MainMenuScreen(game, gameovermusic.getVolume()) );
             return true;
         }
         return false;

@@ -105,7 +105,7 @@ public class MultiplayerGameScreen1 implements Screen, ApplicationListener{
 
     public static float VOLUME;
 
-    public MultiplayerGameScreen1(SpaceAgila game) {
+    public MultiplayerGameScreen1(SpaceAgila game, float volume) {
         connectSocket();
         configSocketEvents();
 
@@ -152,6 +152,7 @@ public class MultiplayerGameScreen1 implements Screen, ApplicationListener{
 
         ingamemusic = Gdx.audio.newMusic(Gdx.files.internal("ingamemusicfinal.mp3"));
         ingamemusic.play();
+        ingamemusic.setVolume(volume);
         ingamemusic.setLooping(true);
 
         soundButtonPlay = new Texture("playsound.png");
@@ -504,7 +505,7 @@ public class MultiplayerGameScreen1 implements Screen, ApplicationListener{
 
     public void connectSocket(){
         try{
-            socket = IO.socket("http://192.168.100.12:3000");
+            socket = IO.socket("http://192.168.43.72:3000");
             socket.connect();
         }
         catch(Exception e){

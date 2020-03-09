@@ -67,7 +67,7 @@ public class EndingScreen implements Screen, ApplicationListener, InputProcessor
             if (Gdx.input.justTouched() || Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                 this.dispose();
                 game.batch.end();
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new MainMenuScreen(game, victorymusic.getVolume()));
                 return;
             }
         } else {
@@ -117,7 +117,7 @@ public class EndingScreen implements Screen, ApplicationListener, InputProcessor
     public boolean keyDown(int keycode) {
         if(keycode == Input.Keys.BACK){
             victorymusic.stop();
-            game.setScreen(new MainMenuScreen(game));
+            game.setScreen(new MainMenuScreen(game, victorymusic.getVolume()));
             return true;
         }
         return false;

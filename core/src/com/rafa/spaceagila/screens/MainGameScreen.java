@@ -58,12 +58,13 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
     private boolean dragging, adjustX, big_asteroid_enable, normal_asteroid_enable, enable_comet, enable_bonuslife, controls_enable;
     public boolean ending, endingbackground;
 
-    private static Music ingamemusic;
+    public static Music ingamemusic;
 
     private Random random;
 
     private Vector2 touch;
     private SpaceAgila game;
+    private MainMenuScreen mainMenuScreen;
 
     Sound explode, life;
 
@@ -87,7 +88,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
     State state;
     public static float VOLUME;
 
-    public MainGameScreen(SpaceAgila game) {
+    public MainGameScreen(SpaceAgila game, float volume) {
         this.game = game;
         final_level_stage = false;
         VOLUME = 1.0f;
@@ -151,6 +152,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
         ingamemusic = Gdx.audio.newMusic(Gdx.files.internal("ingamemusicfinal.mp3"));
         ingamemusic.play();
         ingamemusic.setLooping(true);
+        ingamemusic.setVolume(volume);
         state = State.RUN;
 
         Gdx.input.setInputProcessor(this);
@@ -385,7 +387,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
             if (Gdx.input.justTouched()) {
                 this.dispose();
                 game.batch.end();
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new MainMenuScreen(game, ingamemusic.getVolume()));
                 return;
             }
         }
@@ -1014,7 +1016,7 @@ public class MainGameScreen implements Screen, ApplicationListener, InputProcess
                 return true;
             }
             else if (state == State.PAUSE){
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new MainMenuScreen(game, ingamemusic.getVolume()));
                 return true;
             }
         }
